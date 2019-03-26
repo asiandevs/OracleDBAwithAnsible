@@ -1,0 +1,70 @@
+- name: create other required directories
+  when: inventory_hostname in groups['dbservers']
+  file:
+    path="{{ item }}"
+    state=directory
+    owner="{{ oracle_user }}"
+    group="{{ oracle_install_group }}"
+    mode=0755
+  with_items:
+    - "{{ scripts_directory }}"
+    - "{{ oracle_inventory }}"
+    - "{{ oracle_base }}"
+    - "{{ stage_dir }}"
+    - "{{ oracle_home }}"
+
+- name: copy oracle 19c db software and response files target database server
+  when: inventory_hostname in groups['dbservers']
+  copy: src=roles/dbsoftware19c_install/files/{{ item }} dest={{ stage_dir }} owner=oracle group=oinstall mode=0644
+  with_items:
+    - 19cEE_SoftOnly.rsp
+
+- name: Create DB Software unpack directory
+  when: inventory_hostname in groups['dbservers']
+  action: file dest={{ oracle_home }} state=directory owner="{{ oracle_user }}" group="{{ oracle_install_group }}" mode=0755
+
+- name: Unpack Oracle 19c Database Software
+  when: inventory_hostname in groups['dbservers']
+  remote_user: "{{ root_user }}"
+  become: yes
+  become_user: "{{ oracle_user }}"
+  unarchive:
+     src={{ stage_dir }}/V981623-01.zip
+     dest="{{ oracle_home }}"
+     remote_src=no
+     mode=0755
+     group="{{ oracle_install_group }}"
+     owner="{{ oracle_user }}"
+
+- name: Install Oracle 19c Database Software
+  when: inventory_hostname in groups['dbservers']
+  remote_user: "{{ root_user }}"
+  become: yes
+  become_user: "{{ oracle_user }}"
+  become_method: sudo
+  shell: "{{ oracle_home }}/runInstaller -silent -responseFile {{ stage_dir }}/19cEE_SoftOnly.rsp -noconfig -ignorePrereqFailure"
+  ignore_errors: True
+
+- name: Execute root.sh
+  when: inventory_hostname in groups['dbservers']
+  remote_user: "{{ root_user }}"
+  shell: '{{ oracle_inventory }}/orainstRoot.sh'
+
+- name: Execute root.sh
+  when: inventory_hostname in groups['dbservers']
+  remote_user: "{{ root_user }}"
+  shell: '{{ oracle_home }}/root.sh'
+  register: root_output
+
+- debug:
+    var: root_output
+
+- name: display post install message
+  debug:
+    msg:
+      - 'Steps completed for Single Instance:'
+      - '- Install Single Instance Oracle Database Softwar'
+      - 'Next Steps left to do:'
+      - '- Create SI database on server racdb01'
+      - '- END OF ALL: git clone all the roles files db maintainence repo'
+

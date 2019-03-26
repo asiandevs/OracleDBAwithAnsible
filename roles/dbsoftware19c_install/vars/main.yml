@@ -1,0 +1,10 @@
+oracle_install_group:            "oinstall"
+root_directory:                  "/u01"
+stage_dir:                       "/u01/stage"
+scripts_directory:               "{{ root_directory }}/app/scripts"
+oracle_base:                     /u01/app/oracle
+oracle_home:                     /u01/app/oracle/product/19.2.0/db100
+oracle_inventory:                /u01/app/oraInventory
+oracle_user:                     oracle
+root_user:                       root
+oradbsoft_rsp:                   "19cEE_SoftOnly"    

@@ -1,0 +1,5 @@
+- hosts: dbservers
+  user: root
+  
+  roles:
+   - dbsoftware19c_install
