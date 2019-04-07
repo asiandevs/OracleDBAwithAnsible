@@ -1,5 +1,7 @@
 # OracleDBAwithAnsible SI (Single Instances)
 
+Note: Please modify all necessary configuration files based on your own environment.
+
 This article describes the installation of Oracle Database 19c 64-bit on Oracle Linux 7 (OL7) 64-bit.
 
 Oracle Installation Prerequisites: Database Installation Guide for Linux 
