@@ -12,7 +12,7 @@
     state=directory
     owner="{{ oracle_user }}"
     group="{{ oracle_install_group }}"
-    mode=0755
+    mode=0775
   with_items:
     - "{{ root_directory }}"
     - "{{ scripts_directory }}"
@@ -23,16 +23,35 @@
   tags:
    - db19c_createinventory
 
+- name: Copy preinstall-19c package to target database server
+  when: inventory_hostname in groups['dbservers']
+  copy: src=roles/dbsoftware19c_install/files/{{ item }} dest={{ stage_dir }} mode=0755 owner="{{ oracle_user }}" group="{{ oracle_install_group }}"
+  with_items:
+     - oracle-database-preinstall-19c-1.0-1.el7.src.rpm
+  tags:
+   - db19c_preinstpkg
+
+- name: Execute rpm package 
+  when: inventory_hostname in groups['dbservers']
+  remote_user: "{{ root_user }}"
+  become: yes
+  command: rpm -U "/{{ stage_dir }}/{{ preinstall_pkg }}"
+  args:
+    warn: false
+  register: db19c_prerpm_install
+  tags:
+   - db19c_preinstpkg
+
 - name: Unpack Oracle 19c Database Software to the target server
   when: inventory_hostname in groups['dbservers']
   remote_user: "{{ root_user }}"
   become: yes
   become_user: "{{ oracle_user }}"
   unarchive:
-     src={{ stage_dir }}/V981623-01.zip
+     src={{ stage_dir }}/LINUX.X64_193000_db_home.zip
      dest="{{ oracle_home }}"
      remote_src=no
-     mode=0755
+     mode=0775
      group="{{ oracle_install_group }}"
      owner="{{ oracle_user }}"
   tags:
@@ -55,19 +74,20 @@
   shell: "{{ oracle_home }}/runInstaller -silent -responseFile {{ stage_dir }}/{{ oradbsoft_rsp }}.rsp -noconfig -ignorePrereqFailure"
   ignore_errors: True
   tags:
-   - db19c_installdbsoftware
+   - dbsoft19c_install
 
 - name: Execute orainstroot.sh
-  when: inventory_hostname in groups['dbservers']
+  when: inventory_hostname in groups['dbservers'] 
   remote_user: "{{ root_user }}"
-  shell: /bin/sh "{{ oracle_inventory }}/orainstRoot.sh"
+  shell: "{{ oracle_inventory }}/orainstRoot.sh" 
+  ignore_errors: True
   tags:
    - db19c_exeorainstroot
 
 - name: Execute root.sh
   when: inventory_hostname in groups['dbservers']
   remote_user: "{{ root_user }}"
-  shell: /bin/sh "{{ oracle_home }}/root.sh"
+  shell: "{{ oracle_home }}/root.sh -silent"
   tags:
    - db19c_exeroot
 
@@ -84,4 +104,4 @@
       - '- Create SI empty Container Database on server ora-x1'
       - '- Create SI Pluggable Database on server ora-x1'
       - '- Deinstall Single Instance Oracle Database Software'
-      - '- END OF ALL: git clone of db_maintainence repository will be shared'
+      - '- END OF ALL: git clone of OracleDBAwithAnsible repository will be shared'
