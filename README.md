@@ -10,6 +10,7 @@ Oracle Installation Prerequisites: Database Installation Guide for Linux
 Setup: 
 OS: OEL 7.5 
 Ansible: ansible 2.7.6
+
 Oracle Software: Download the Oracle software from OTN or MOS depending on your support status. Oracle binaries are staged from the "edelivery: Oracle Database 19c Software (64-bit)". They have to be manually downloaded and made available for this article to apply 
 
 
@@ -29,7 +30,8 @@ Summary commands:
    git clone https://github.com/asiandevs/OracleDBAwithAnsible
 
 2. Stage the following Oracle Software on the control machine
-   - V981623-01.zip
+   https://www.oracle.com/technetwork/database/enterprise-edition/downloads/oracle19c-linux-5462157.html
+   Oracle Database 19c (19.3) for Linux x86-64 [ LINUX.X64_193000_db_home.zip ]
 
 3. Configure an Ansible inventory file (example as below) 
 [root@oel75 ansible]# cat ansible.cfg | grep inventory
