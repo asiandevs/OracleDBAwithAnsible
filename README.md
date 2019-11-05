@@ -34,6 +34,8 @@ Summary commands:
    Oracle Database 19c (19.3) for Linux x86-64 [ LINUX.X64_193000_db_home.zip ]
 
 3. Configure an Ansible inventory file (example as below) 
+
+```
 [root@oel75 ansible]# cat ansible.cfg | grep inventory
 inventory = ./inventory
 [root@oel75 ansible]# cat inventory
@@ -44,8 +46,10 @@ inventory = ./inventory
 [dbservers]
 192.168.56.102
 192.168.56.103
+```
 
-4. Run the playbook role "dbsoftware19c_install"
+4. Run the playbook role `dbsoftware19c_install`
+```
 ansible-playbook dbsoftware19c_install  [ with options for testing, use --check / --diff / --step / -vvv ]
-
+```
 
