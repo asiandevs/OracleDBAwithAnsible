@@ -15,7 +15,7 @@ Oracle Installation Prerequisites: Database Installation Guide for Linux
 Oracle RDBMS Software:
 > Download the Oracle software from OTN or MOS depending on your support status. 
 > Oracle binaries are staged from the "edelivery: Oracle Database 19c Software (64-bit)".
-Oracle Software: Download the Oracle software from OTN or MOS depending on your support status. Oracle binaries are staged from the "edelivery: Oracle Database 19c Software (64-bit)". They have to be manually downloaded and made available for this article to apply 
+> They have to be manually downloaded and made available for this article to apply. 
 
 
 - Install Oracle Database Software
