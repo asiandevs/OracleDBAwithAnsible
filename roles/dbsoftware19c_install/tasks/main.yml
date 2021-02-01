@@ -42,6 +42,14 @@
   tags:
    - db19c_preinstpkg
 
+- name: Download Oracle 19c archive from server
+  get_url:
+    url: "{{ oracle19c_url }}"
+    dest: "{{ stage_dir }}/LINUX.X64_193000_db_home.zip"
+    mode: '0775'
+  tags:
+    - download_oracle19c
+
 - name: Unpack Oracle 19c Database Software to the target server
   when: inventory_hostname in groups['dbservers']
   remote_user: "{{ root_user }}"
