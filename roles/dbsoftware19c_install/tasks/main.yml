@@ -4,6 +4,83 @@
     msg:
       - 'Oracle Database Software 19c Installation started for Single Instance at {{ansible_date_time.iso8601}}:'
 
+- name: Ensure free space on disk is more than 7.2 GB
+  assert:
+    that: item.size_available > 7200000000
+    msg: "warning: disk space is low"
+  when: item.mount == mount_directory
+  with_items: "{{ ansible_mounts }}"
+  no_log: true
+
+- debug:
+    msg: "checking resource limits"
+
+- name: check file descriptor soft limit
+  shell:
+    cmd: ulimit -Sn
+  register: limits
+
+- name: ---
+  fail:
+    msg: "warning: file descriptor soft limit is {{ limits.stdout }}"
+  ignore_errors: yes
+  when: limits.stdout | int < 1024
+
+- name: check file descriptor hard limit
+  shell:
+    cmd: ulimit -Hn
+  register: limits
+
+- name: ---
+  fail:
+    msg: "warning: file descriptor hard limit is {{ limits.stdout }}"
+  ignore_errors: yes
+  when: limits.stdout | int < 65536
+
+- name: check available processes soft limit
+  shell:
+    cmd: ulimit -Su
+  register: limits
+
+- name: ---
+  fail:
+    msg: "warning: available processes soft limit is {{ limits.stdout }}"
+  ignore_errors: yes
+  when: limits.stdout | int < 2047
+
+- name: check available processes hard limit
+  shell:
+    cmd: ulimit -Hu
+  register: limits
+
+- name: ---
+  fail:
+    msg: "warning: available processes hard limit is {{ limits.stdout }}"
+  ignore_errors: yes
+  when: limits.stdout | int < 16384
+
+- name: check stack segment soft limit
+  shell:
+    cmd: ulimit -Ss
+  register: limits
+
+- name: ---
+  fail:
+    msg: "warning: stack segment soft limit is {{ limits.stdout }}"
+  ignore_errors: yes
+  when: limits.stdout | int < 10240 
+
+- name: check stack segment hard limit
+  shell:
+    cmd: ulimit -Hs
+  register: limits
+
+- name: ---
+  fail:
+    msg: "warning: stack segment hard limit is {{ limits.stdout }}"
+  ignore_errors: yes
+  when: limits.stdout | int < 10240 or limits.stdout | int > 32768 
+
 - name: create required directories
   when: inventory_hostname in groups['dbservers']
   remote_user: "{{ root_user }}"

@@ -1,4 +1,5 @@
 oracle_install_group:            "oinstall"
+mount_directory:                 "/"
 root_directory:                  "/u01"
 stage_dir:                       "/u01/stage"
 scripts_directory:               "{{ root_directory }}/app/scripts"
