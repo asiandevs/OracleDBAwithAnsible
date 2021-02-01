@@ -1,3 +1,4 @@
+sudoers_group:                   wheel
 oracle_install_group:            "oinstall"
 root_directory:                  "/u01"
 stage_dir:                       "/u01/stage"
