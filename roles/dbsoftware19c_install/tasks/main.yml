@@ -4,6 +4,22 @@
     msg:
       - 'Oracle Database Software 19c Installation started for Single Instance at {{ansible_date_time.iso8601}}:'
 
+- name: Ensure user groups exist
+  group:
+    name: "{{ oracle_install_group }}"
+    state: present
+  with_items:
+    - "{{ oracle_install_group }}"
+    - oper
+    - dba
+
+- name: Create oracle user and add to groups
+  user:
+    name: "{{ oracle_user }}"
+    state: present
+    shell: /bin/bash
+    groups: "{{ oracle_install_group }}, oper, dba, {{ sudoers_group }}"
+
 - name: create required directories
   when: inventory_hostname in groups['dbservers']
   remote_user: "{{ root_user }}"
